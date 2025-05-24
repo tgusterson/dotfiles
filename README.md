@@ -50,5 +50,5 @@ for module in */; do
   stow "$module"
 done
 
-echo -e "\n\n✅ All done!"
+echo -e "\n\n✅ All done!""
 ```
