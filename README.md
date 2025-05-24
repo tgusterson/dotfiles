@@ -23,6 +23,15 @@ fi
 
 # 2. Install Homebrew packages
 BREW_PKGS=(
+  lua
+  luajit
+  neovim
+  tmux
+  tree-sitter
+  powerlevel10k
+  zsh-autocomplete
+  zsh-syntax-highlighting
+  zsh-autosuggestions
   stow
   ripgrep
   fzf
