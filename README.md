@@ -1,18 +1,23 @@
-My config files.
+My dotfiles
+===========
 
+Configuration files for Neovim, tmux, Ghostty, and more are managed with [GNU Stow](https://www.gnu.org/software/stow/) to automate the creation and upkeep of symlinks.
+
+### Setup
 Requires: Homebrew
 
-Open terminal and run the below:
+Open your terminal and run the below:
 
-# 1. Clone config.nvim into ~/
+```bash
+# 1. Clone dotfiles into ~/.dotfiles
 REPO_URL="https://github.com/tgusterson/dotfiles"
 CLONE_DIR="$HOME/.dotfiles"
 
 if [ -d "$CLONE_DIR/.git" ]; then
-  echo "↻ Updating existing config.nvim..."
+  echo "↻ Updating existing dotfiles..."
   git -C "$CLONE_DIR" pull --ff-only
 else
-  echo "→ Cloning config.nvim into home directory..."
+  echo "→ Cloning dotfiles into your home directory..."
   git clone "$REPO_URL" "$CLONE_DIR"
 fi
 
@@ -25,7 +30,6 @@ BREW_PKGS=(
 )
 
 echo "→ Installing Homebrew packages: ${BREW_PKGS[*]}..."
-# brew install will skip already-installed ones
 brew update
 brew install "${BREW_PKGS[@]}"
 
@@ -40,12 +44,11 @@ fi
 echo "→ Applying GNU Stow for each module in $DOTFILES_DIR..."
 cd "$DOTFILES_DIR"
 
-# Only consider directories (not files);
 for module in */; do
-  # strip the trailing slash
   module="${module%/}"
   printf "\n» stow %-15s" "$module"
   stow "$module"
 done
 
 echo -e "\n\n✅ All done!"
+```
