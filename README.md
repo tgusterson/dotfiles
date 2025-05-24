@@ -40,7 +40,10 @@ BREW_PKGS=(
 
 echo "→ Installing Homebrew packages: ${BREW_PKGS[*]}..."
 brew update
+brew upgrade
 brew install "${BREW_PKGS[@]}"
+brew autoremove
+brew cleanup
 
 # 3. Stow every directory under ~/.dotfiles
 DOTFILES_DIR="$HOME/.dotfiles"
