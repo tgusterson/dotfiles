@@ -1,4 +1,5 @@
 font-family = FuraMono Nerd Font
+font-size = 14
 theme = tokyonight_night
 macos-option-as-alt = true
 keybind = alt+left=unbind
