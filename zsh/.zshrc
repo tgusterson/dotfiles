@@ -13,11 +13,12 @@ source /opt/homebrew/share/zsh-autocomplete/zsh-autocomplete.plugin.zsh
 source <(fzf --zsh)
 
 # Preferred editor for local and remote sessions
- if [[ -n $SSH_CONNECTION ]]; then
+if [[ -n $SSH_CONNECTION ]]; then
    export EDITOR='vim'
- else
+else
    export EDITOR='nvim'
- fi
+   alias vim='nvim'  # Alias vim to nvim when not in an SSH session
+fi
 
 alias brew='env PATH="${PATH//$(pyenv root)\/shims:/}" brew'
 alias pip=/usr/local/bin/pip3
