@@ -62,5 +62,18 @@ for module in */; do
   stow "$module"
 done
 
+# 4. Clone TPM
+git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+
+# 4. Clone TPM
+git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+
+# 5. Run tmux and install plugins
+cd ~
+tmux
+send-keys "Ctrl+S + I"
+send-keys "Enter"
+send-keys "Ctrl+S + :kill-server"
+
 echo -e "\n\n✅ All done!""
 ```
