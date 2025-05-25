@@ -36,6 +36,7 @@ BREW_PKGS=(
   ripgrep
   fzf
   luarocks
+  lazygit
 )
 
 echo "→ Installing Homebrew packages: ${BREW_PKGS[*]}..."
