@@ -20,6 +20,8 @@ else
    alias vim='nvim'  # Alias vim to nvim when not in an SSH session
 fi
 
+bindkey -v
+
 alias brew='env PATH="${PATH//$(pyenv root)\/shims:/}" brew'
 alias pip=/usr/local/bin/pip3
 
