@@ -65,15 +65,5 @@ done
 # 4. Clone TPM
 git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 
-# 4. Clone TPM
-git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
-
-# 5. Run tmux and install plugins
-cd ~
-tmux
-send-keys "Ctrl+S + I"
-send-keys "Enter"
-send-keys "Ctrl+S + :kill-server"
-
-echo -e "\n\n✅ All done!""
+echo -e "\n\n✅ All done! Run 'Ctrl + Shift + I' in tmux to install plugins.\n""
 ```
