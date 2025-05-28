@@ -7,8 +7,6 @@ return {
 			show_hidden = true,
 		},
 	},
-	-- Optional dependencies
-	-- dependencies = { { "echasnovski/mini.icons", opts = {} } },
-	dependencies = { "nvim-tree/nvim-web-devicons" }, -- use if you prefer nvim-web-devicons
+	dependencies = { "nvim-tree/nvim-web-devicons" },
 	lazy = false,
 }

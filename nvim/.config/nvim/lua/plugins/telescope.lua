@@ -46,7 +46,7 @@ return {
 		vim.keymap.set("n", "<leader>sw", builtin.grep_string, { desc = "[S]earch current [W]ord" })
 		vim.keymap.set("n", "<leader>sg", function()
 			builtin.live_grep({
-				additional_args = function(opts)
+				additional_args = function()
 					return {
 						"--fixed-strings",
 						"--glob",
