@@ -37,12 +37,12 @@ return {
 			local caps = require("blink.cmp").get_lsp_capabilities()
 			local function on_attach(_, bufnr)
 				vim.bo[bufnr].omnifunc = "v:lua.vim.lsp.omnifunc"
-				local map_opts = { noremap = true, silent = true, buffer = bufnr }
+				local opts = { noremap = true, silent = true, buffer = bufnr }
 				local function map(mode, lhs, rhs, desc)
-					vim.keymap.set(mode, lhs, rhs, vim.tbl_extend("force", map_opts, { desc = desc }))
+					vim.keymap.set(mode, lhs, rhs, vim.tbl_extend("force", opts, { desc = desc }))
 				end
 
-				-- LSP mappings
+				-- Key mappings
 				map("n", "gd", vim.lsp.buf.definition, "Go to Definition")
 				map("n", "K", vim.lsp.buf.hover, "Hover Documentation")
 				map("n", "gi", vim.lsp.buf.implementation, "Go to Implementation")
@@ -51,8 +51,6 @@ return {
 				map("n", "<leader>r", vim.lsp.buf.rename, "Rename Symbol")
 				map("n", "gD", vim.lsp.buf.declaration, "Go to Declaration")
 				map("n", "<leader>h", vim.lsp.buf.signature_help, "Signature Help")
-
-				-- Diagnostic mappings
 				map("n", "]d", function()
 					vim.diagnostic.jump({ count = 1, float = true })
 				end, "Next Diagnostic")
@@ -63,20 +61,28 @@ return {
 				map("n", "<leader>q", vim.diagnostic.setloclist, "Populate Loclist with Diagnostics")
 			end
 
-			-- 1) Apply to all servers
-			vim.lsp.config.default_config = {
+			vim.lsp.config("*", {
 				on_attach = on_attach,
 				capabilities = caps,
-			}
-
-			-- 2) Per-server override example
-			vim.lsp.config.lua_ls = vim.tbl_deep_extend("force", vim.lsp.config.lua_ls or {}, {
-				settings = {
-					Lua = { diagnostics = { globals = { "vim" } } },
-				},
 			})
 
-			-- 3) Enable every server Mason has installed
+			vim.lsp.config(
+				"lua_ls",
+				vim.tbl_deep_extend("force", {}, vim.lsp.config["lua_ls"] or {}, {
+					settings = {
+						Lua = {
+							diagnostics = { globals = { "vim" } },
+							workspace = {
+								library = vim.api.nvim_get_runtime_file("", true),
+								checkThirdParty = false,
+							},
+							telemetry = { enable = false },
+						},
+					},
+				})
+			)
+
+			-- 4) Enable _every_ LSP server Mason has installed :contentReference[oaicite:1]{index=1}
 			vim.lsp.enable(ensure_installed.lsp_list)
 		end,
 	},

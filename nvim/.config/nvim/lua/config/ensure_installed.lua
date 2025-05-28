@@ -6,9 +6,9 @@ M.lsp = {
 	eslint = {},
 	jsonls = {},
 	ts_ls = {},
+	tailwindcss = {},
 	marksman = {},
 	pyright = {},
-	tailwindcss = {},
 }
 
 M.linters = {
