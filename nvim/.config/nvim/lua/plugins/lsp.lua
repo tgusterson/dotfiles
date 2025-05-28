@@ -31,6 +31,28 @@ return {
 		end,
 	},
 	{
+		"nvimtools/none-ls.nvim",
+		dependencies = {
+			"williamboman/mason.nvim",
+			"jay-babu/mason-null-ls.nvim",
+		},
+		config = function()
+			local null_ls = require("null-ls")
+			local mason_null = require("mason-null-ls")
+			local tools = vim.list_extend(ensure_installed.linters_list, ensure_installed.formatters_list)
+
+			mason_null.setup({
+				ensure_installed = tools,
+				automatic_installation = true,
+				handlers = {},
+			})
+
+			null_ls.setup({
+				sources = {},
+			})
+		end,
+	},
+	{
 		"neovim/nvim-lspconfig",
 		dependencies = { "saghen/blink.cmp" },
 		config = function()
