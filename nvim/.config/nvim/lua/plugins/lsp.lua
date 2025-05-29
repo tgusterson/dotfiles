@@ -47,25 +47,8 @@ return {
 				handlers = {},
 			})
 
-			local augroup = vim.api.nvim_create_augroup("LspFormatting", {})
 			null_ls.setup({
 				sources = {},
-				on_attach = function(client, bufnr)
-					if client.supports_method("textDocument/formatting") then
-						vim.api.nvim_clear_autocmds({ group = augroup, buffer = bufnr })
-						vim.api.nvim_create_autocmd("BufWritePre", {
-							group = augroup,
-							buffer = bufnr,
-							callback = function()
-								vim.lsp.buf.format({ async = false })
-							end,
-						})
-
-						vim.keymap.set("n", "<leader>fb", function()
-							vim.lsp.buf.format({ async = false })
-						end, { buffer = bufnr, desc = "[F]ormat [B]uffer" })
-					end
-				end,
 			})
 		end,
 	},
