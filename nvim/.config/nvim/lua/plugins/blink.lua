@@ -23,6 +23,9 @@ return {
 		-- 	["<C-Tab>"] = { "snippet_forward", "fallback" },
 		-- 	cmdline = { preset = "default" },
 		-- },
+		fuzzy = {
+			implementation = "lua",
+		},
 		appearance = {
 			-- Sets the fallback highlight groups to nvim-cmp's highlight groups
 			-- Useful for when your theme doesn't support blink.cmp
