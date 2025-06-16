@@ -65,6 +65,15 @@ return {
 				end,
 			})
 		end, { desc = "[S]earch by [G]rep (excluding common folders and files)" })
+		vim.keymap.set("n", "<leader>sa", function()
+			builtin.live_grep({
+				additional_args = function()
+					return {
+						"--fixed-strings",
+					}
+				end,
+			})
+		end, { desc = "[S]earch [A]ll by Grep" })
 		vim.keymap.set("n", "<leader>sd", builtin.diagnostics, { desc = "[S]earch [D]iagnostics" })
 		vim.keymap.set("n", "<leader>sr", builtin.resume, { desc = "[S]earch [R]esume" })
 		vim.keymap.set("n", "<leader>s.", builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
