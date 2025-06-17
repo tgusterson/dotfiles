@@ -132,7 +132,6 @@ else
 	vim.keymap.set("n", "<C-j>", "<C-w><C-j>", { desc = "Move focus to the lower window" })
 	vim.keymap.set("n", "<C-k>", "<C-w><C-k>", { desc = "Move focus to the upper window" })
 
-	vim.keymap.set("n", "<leader>\\", "<CMD>Oil --float<CR>", { desc = "Open parent directory" })
 	vim.keymap.set("n", "\\", "<CMD>Neotree toggle<CR>", { desc = "Open file tree" })
 
 	vim.keymap.set("i", "<C-a>", 'copilot#Accept("\\<CR>")', {
