@@ -25,6 +25,12 @@ return {
 		-- },
 		fuzzy = {
 			implementation = "lua",
+			sorts = {
+				"exact",
+				"score",
+				"sort_text",
+				"kind",
+			},
 		},
 		appearance = {
 			-- Sets the fallback highlight groups to nvim-cmp's highlight groups
