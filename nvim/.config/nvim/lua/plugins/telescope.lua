@@ -38,8 +38,8 @@ return {
 					"lock%.json",
 				},
 
-				-- prompt_prefix = "🔍 ",
-				-- path_display = { "smart" },
+				prompt_prefix = "🔍 > ",
+				path_display = { "smart" },
 			},
 
 			pickers = {
