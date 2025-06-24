@@ -33,15 +33,35 @@ return {
 				},
 			},
 			textobjects = {
+				move = {
+					enable = true,
+					set_jumps = true,
+					goto_next_start = {
+						["]f"] = "@function.outer",
+						["]o"] = "@block.outer",
+					},
+					goto_previous_start = {
+						["[f"] = "@function.outer",
+						["[o"] = "@block.outer",
+					},
+				},
 				select = {
 					enable = true,
 					lookahead = true,
 					keymaps = {
 						["af"] = "@function.outer",
 						["if"] = "@function.inner",
-						["ac"] = "@class.outer",
-						["ic"] = { query = "@class.inner", desc = "Select inner part of a class" },
-						["as"] = { query = "@local.scope", query_group = "locals", desc = "Select language scope" },
+						["aa"] = "@parameter.outer",
+						["ia"] = "@parameter.inner",
+						["al"] = "@loop.outer",
+						["il"] = "@loop.inner",
+						["ac"] = "@comment.outer",
+						["ic"] = "@comment.inner",
+						["ai"] = "@conditional.outer",
+						["ii"] = "@conditional.inner",
+						["ao"] = "@block.outer",
+						["io"] = "@block.inner",
+						-- ["as"] = { query = "@local.scope", query_group = "locals", desc = "Select language scope" },
 					},
 					selection_modes = {
 						["@parameter.outer"] = "v",
