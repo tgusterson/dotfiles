@@ -4,9 +4,12 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
+# Ensure Homebrew-installed tools (including bash) come first
+export PATH="$(brew --prefix)/bin:$PATH"
+
 # zsh options
 source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+source "$(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
 source /opt/homebrew/share/zsh-autocomplete/zsh-autocomplete.plugin.zsh
 
 # Load fzf key bindings and fuzzy completion
@@ -38,12 +41,11 @@ eval "$(pyenv init -)"
 
 # NVM
 export NVM_DIR="$HOME/.nvm"
-    [ -s "$(brew --prefix)/opt/nvm/nvm.sh" ] && \. "$(brew --prefix)/opt/nvm/nvm.sh" # This loads nvm
-    [ -s "$(brew --prefix)/opt/nvm/etc/bash_completion.d/nvm" ] && \. "$(brew --prefix)/opt/nvm/etc/bash_completion.d/nvm" # This loads nvm bash_completion
-
+[ -s "$(brew --prefix)/opt/nvm/nvm.sh" ] && \. "$(brew --prefix)/opt/nvm/nvm.sh"
+[ -s "$(brew --prefix)/opt/nvm/etc/bash_completion.d/nvm" ] && \. "$(brew --prefix)/opt/nvm/etc/bash_completion.d/nvm"
 
 # pnpm
-export PNPM_HOME="/Users/tgusterson/Library/pnpm"
+export PNPM_HOME="$HOME/Library/pnpm"
 case ":$PATH:" in
   *":$PNPM_HOME:"*) ;;
   *) export PATH="$PNPM_HOME:$PATH" ;;
@@ -54,8 +56,8 @@ esac
 
 # Go
 export GOPATH=$HOME/go
-export PATH=$PATH:/usr/local/go/bin
-export PATH=$PATH:$GOPATH/binsource 
+export PATH="$PATH:/usr/local/go/bin"
+export PATH="$PATH:$GOPATH/bin"
 
 # Android SDK
 # if [ -d "$HOME/Library/Android/sdk" ]; then
@@ -71,7 +73,7 @@ export PATH=$PATH:$GOPATH/binsource
 # export JAVA_HOME=$(/usr/libexec/java_home)
 # export PATH="$JAVA_HOME/bin:$PATH"
 
-# extend path
+# extend path (redundant if using brew prefix above, but kept for other tools)
 export PATH="$PATH:/usr/local/bin"
 
 # Powerlevel10k theme
