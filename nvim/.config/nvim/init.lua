@@ -138,6 +138,10 @@ else
 		expr = true,
 		replace_keycodes = false,
 	})
+	vim.keymap.set("i", "<C-l>", 'copilot#AcceptLine("\\<CR>")', {
+		expr = true,
+		replace_keycodes = false,
+	})
 	vim.g.copilot_no_tab_map = true
 
 	-- [[ Basic Autocommands ]]
