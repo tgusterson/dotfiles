@@ -1,9 +1,9 @@
-My dotfiles
-===========
+# My dotfiles
 
 Configuration files for Neovim, tmux, Ghostty, and more are managed with [GNU Stow](https://www.gnu.org/software/stow/) to automate the creation and upkeep of symlinks.
 
 ### Setup
+
 Requires: Homebrew
 
 Open your terminal and run the below:
@@ -23,6 +23,7 @@ fi
 
 # 2. Install Homebrew packages
 BREW_PKGS=(
+  bash,
   lua
   luajit
   neovim
