@@ -64,7 +64,6 @@ return {
 					vim.keymap.set(mode, lhs, rhs, vim.tbl_extend("force", opts, { desc = desc }))
 				end
 
-				-- Key mappings
 				map("n", "gd", vim.lsp.buf.definition, "Go to Definition")
 				map("n", "K", vim.lsp.buf.hover, "Hover Documentation")
 				map("n", "gi", vim.lsp.buf.implementation, "Go to Implementation")
@@ -104,7 +103,6 @@ return {
 				})
 			)
 
-			-- 4) Enable _every_ LSP server Mason has installed :contentReference[oaicite:1]{index=1}
 			vim.lsp.enable(ensure_installed.lsp_list)
 		end,
 	},
