@@ -27,6 +27,7 @@ return {
 					"--smart-case",
 					"--fixed-strings",
 					"--hidden",
+					-- "--no-ignore",
 				},
 
 				file_ignore_patterns = {
@@ -48,6 +49,7 @@ return {
 						"rg",
 						"--files",
 						"--hidden",
+						-- "--no-ignore",
 					},
 				},
 			},
