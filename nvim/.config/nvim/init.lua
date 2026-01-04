@@ -1,10 +1,34 @@
 -- ** Keymaps & options available in Neovim and VSCode **
 
+vim.o.autoread = true
+
+-- Check for external changes
+vim.api.nvim_create_autocmd({ "BufEnter", "CursorHold", "CursorHoldI", "FocusGained" }, {
+	callback = function()
+		if vim.fn.mode() ~= "c" then
+			vim.cmd("checktime")
+		end
+	end,
+	pattern = { "*" },
+})
+
+-- Show notification when file is reloaded
+vim.api.nvim_create_autocmd("FileChangedShellPost", {
+	callback = function()
+		vim.notify("File changed on disk, buffer reloaded", vim.log.levels.WARN)
+	end,
+})
+
 -- Set <space> as the leader key
 -- See `:help mapleader`
 --  NOTE: Must happen before plugins are loaded (otherwise wrong leader will be used)
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
+
+vim.diagnostic.config({
+	virtual_text = true,
+	update_in_insert = false,
+})
 
 -- Case-insensitive searching UNLESS \C or one or more capital letters in the search term
 vim.opt.ignorecase = true
@@ -16,6 +40,14 @@ vim.keymap.set("n", "<leader>y", '"+y', { noremap = true, silent = true })
 vim.keymap.set("v", "<leader>y", '"+y', { noremap = true, silent = true })
 vim.keymap.set("n", "<leader>;", ":", { noremap = true, desc = "Command mode" })
 vim.keymap.set("n", "<shift>:", ";", { noremap = true })
+
+-- Copy path using <leader>cp
+vim.keymap.set(
+	"n",
+	"<leader>cp",
+	':let @+ = expand("%:p") | echo "Copied: " . @+<CR>',
+	{ noremap = true, desc = "Copy file path" }
+)
 
 -- Leave insert mode, press l, press a. I use this as an easy way to "[j]ump" out of autopaired characters.
 -- Could look into different autopairing plugin which offers this feature but this is good enough for now.
