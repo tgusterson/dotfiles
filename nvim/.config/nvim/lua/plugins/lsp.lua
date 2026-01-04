@@ -64,7 +64,9 @@ return {
 					vim.keymap.set(mode, lhs, rhs, vim.tbl_extend("force", opts, { desc = desc }))
 				end
 
-				map("n", "gd", vim.lsp.buf.definition, "Go to Definition")
+				map("n", "gd", function()
+				require("telescope.builtin").lsp_definitions()
+			end, "Go to Definition")
 				map("n", "K", vim.lsp.buf.hover, "Hover Documentation")
 				map("n", "gi", vim.lsp.buf.implementation, "Go to Implementation")
 				map("n", "gr", require("telescope.builtin").lsp_references, "[G]oto [R]eferences")
