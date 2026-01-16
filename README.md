@@ -24,6 +24,7 @@ fi
 # 2. Install Homebrew packages
 BREW_PKGS=(
   bash,
+  bat
   lua
   luajit
   neovim
@@ -47,7 +48,13 @@ brew install "${BREW_PKGS[@]}"
 brew autoremove
 brew cleanup
 
-# 3. Stow every directory under ~/.dotfiles
+# 3. Setup bat theme
+mkdir -p "$(bat --config-dir)/themes"
+cd "$(bat --config-dir)/themes"
+curl -O https://raw.githubusercontent.com/folke/tokyonight.nvim/main/extras/sublime/tokyonight_night.tmTheme
+bat cache --build
+
+# 4. Stow every directory under ~/.dotfiles
 DOTFILES_DIR="$HOME/.dotfiles"
 
 if [ ! -d "$DOTFILES_DIR" ]; then
@@ -64,7 +71,7 @@ for module in */; do
   stow "$module"
 done
 
-# 4. Clone TPM
+# 5. Clone TPM
 git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 
 echo -e "\n\n✅ All done! Run 'Ctrl + Shift + I' in tmux to install plugins.\n""
