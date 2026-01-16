@@ -80,7 +80,7 @@ export PATH="$PATH:/usr/local/go/bin:$GOPATH/bin"
 export PATH="$PATH:/usr/local/bin"
 
 # Bat theme
-export BAT_THEME="tokyonight_night"ba
+export BAT_THEME="tokyonight_night"
 
 # ------------------------------------------------------------------------------
 # 6. ALIASES
