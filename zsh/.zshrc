@@ -25,6 +25,7 @@ fi
 # ------------------------------------------------------------------------------
 # Set Vi mode BEFORE loading plugins so they bind to the correct keymap
 bindkey -v
+bindkey -M vicmd ":" undefined-key
 export KEYTIMEOUT=1 # Reduces delay when hitting ESC
 
 # ------------------------------------------------------------------------------
