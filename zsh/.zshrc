@@ -18,12 +18,11 @@ elif [[ -f /home/linuxbrew/.linuxbrew/bin/brew ]]; then
   eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 fi
 
-# Define BREW_PREFIX for later use
+# Define BREW_PREFIX for later use (empty if brew not installed)
 if (( $+commands[brew] )); then
   BREW_PREFIX="$(brew --prefix)"
 else
-  # Fallback if brew is not found/installed
-  BREW_PREFIX="/usr/local"
+  BREW_PREFIX=""
 fi
 
 # Set Editor
@@ -45,17 +44,29 @@ export KEYTIMEOUT=1 # Reduces delay when hitting ESC
 # ------------------------------------------------------------------------------
 # 4. PLUGINS & COMPLETIONS
 # ------------------------------------------------------------------------------
+# Define potential plugin paths
+ZSH_PLUGINS_LOCAL="$HOME/.local/share"
+
 # Syntax Highlighting
-[[ -f "$BREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]] && \.
+if [[ -f "$BREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]]; then
   source "$BREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+elif [[ -f "$ZSH_PLUGINS_LOCAL/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]]; then
+  source "$ZSH_PLUGINS_LOCAL/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+fi
 
 # Autosuggestions
-[[ -f "$BREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ]] && \.
+if [[ -f "$BREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ]]; then
   source "$BREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
+elif [[ -f "$ZSH_PLUGINS_LOCAL/zsh-autosuggestions/zsh-autosuggestions.zsh" ]]; then
+  source "$ZSH_PLUGINS_LOCAL/zsh-autosuggestions/zsh-autosuggestions.zsh"
+fi
 
-# Autocomplete (Note: We load this BEFORE fzf so fzf can override it)
-[[ -f "$BREW_PREFIX/share/zsh-autocomplete/zsh-autocomplete.plugin.zsh" ]] && \.
+# Autocomplete
+if [[ -f "$BREW_PREFIX/share/zsh-autocomplete/zsh-autocomplete.plugin.zsh" ]]; then
   source "$BREW_PREFIX/share/zsh-autocomplete/zsh-autocomplete.plugin.zsh"
+elif [[ -f "$ZSH_PLUGINS_LOCAL/zsh-autocomplete/zsh-autocomplete.plugin.zsh" ]]; then
+  source "$ZSH_PLUGINS_LOCAL/zsh-autocomplete/zsh-autocomplete.plugin.zsh"
+fi
 
 # FZF (Loaded last to ensure it takes over the ** trigger and Tab keys)
 if (( $+commands[fzf] )); then
@@ -84,8 +95,11 @@ fi
 
 # NVM
 export NVM_DIR="$HOME/.nvm"
-[ -s "$BREW_PREFIX/opt/nvm/nvm.sh" ] && \. "$BREW_PREFIX/opt/nvm/nvm.sh"
-[ -s "$BREW_PREFIX/opt/nvm/etc/bash_completion.d/nvm" ] && \. "$BREW_PREFIX/opt/nvm/etc/bash_completion.d/nvm"
+if [ -s "$BREW_PREFIX/opt/nvm/nvm.sh" ]; then
+  source "$BREW_PREFIX/opt/nvm/nvm.sh"
+elif [ -s "$HOME/.nvm/nvm.sh" ]; then
+  source "$HOME/.nvm/nvm.sh"
+fi
 
 # PNPM
 if [[ "$(uname -s)" == "Darwin" ]]; then
@@ -103,8 +117,8 @@ esac
 export GOPATH=$HOME/go
 export PATH="$PATH:/usr/local/go/bin:$GOPATH/bin"
 
-# Ensure /usr/local/bin is in path
-export PATH="$PATH:/usr/local/bin"
+# Ensure /usr/local/bin and ~/.local/bin are in path
+export PATH="$HOME/.local/bin:$PATH:/usr/local/bin"
 
 # Bat theme
 export BAT_THEME="tokyonight_night"
@@ -112,14 +126,18 @@ export BAT_THEME="tokyonight_night"
 # ------------------------------------------------------------------------------
 # 6. ALIASES
 # ------------------------------------------------------------------------------
-alias brew='env PATH="${PATH//$(pyenv root)\/shims:/}" brew'
-# alias pip=/usr/local/bin/pip3 # Removed hardcoded path
+if (( $+commands[brew] )); then
+  alias brew='env PATH="${PATH//$(pyenv root)\/shims:/}" brew'
+fi
 alias inv='nvim $(fzf -m --preview="bat --color=always {}")'
 alias start_my_day="~/start_my_day.sh"
 
 # ------------------------------------------------------------------------------
 # 7. THEME (POWERLEVEL10K)
 # ------------------------------------------------------------------------------
-[[ -f "$BREW_PREFIX/share/powerlevel10k/powerlevel10k.zsh-theme" ]] && \.
+if [[ -f "$BREW_PREFIX/share/powerlevel10k/powerlevel10k.zsh-theme" ]]; then
   source "$BREW_PREFIX/share/powerlevel10k/powerlevel10k.zsh-theme"
+elif [[ -f "$ZSH_PLUGINS_LOCAL/powerlevel10k/powerlevel10k.zsh-theme" ]]; then
+  source "$ZSH_PLUGINS_LOCAL/powerlevel10k/powerlevel10k.zsh-theme"
+fi
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh

@@ -33,59 +33,132 @@ else
     git clone "$REPO_URL" "$DOTFILES_DIR"
 fi
 
-# 3. Check/Install Homebrew
-if ! command -v brew &> /dev/null; then
-    log_info "Homebrew not found. Installing..."
-    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-
-    # Add Brew to PATH for the current session
-    if [[ "$MACHINE" == "Linux" ]]; then
-        eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-    elif [[ "$MACHINE" == "Mac" ]]; then
+# 3. Install Packages & Plugins based on OS
+if [[ "$MACHINE" == "Mac" ]]; then
+    # --- macOS (Homebrew) ---
+    if ! command -v brew &> /dev/null; then
+        log_info "Homebrew not found. Installing..."
+        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+        # Initialize Homebrew (Apple Silicon or Intel)
         if [[ -f /opt/homebrew/bin/brew ]]; then
             eval "$(/opt/homebrew/bin/brew shellenv)"
-        else
+        elif [[ -f /usr/local/bin/brew ]]; then
             eval "$(/usr/local/bin/brew shellenv)"
         fi
+    else
+        log_info "Homebrew is already installed."
     fi
-else
-    log_info "Homebrew is already installed."
+
+    BREW_PKGS=(
+      bash bat lua luajit neovim tmux tree-sitter powerlevel10k
+      zsh-autocomplete zsh-syntax-highlighting zsh-autosuggestions
+      stow ripgrep fzf luarocks lazygit
+    )
+
+    log_info "Installing Homebrew packages..."
+    brew update
+    brew install "${BREW_PKGS[@]}"
+    brew cleanup
+
+    # Install Nerd Fonts for Powerlevel10k
+    log_info "Installing Nerd Fonts..."
+    brew install --cask font-fira-mono-nerd-font
+
+elif [[ "$MACHINE" == "Linux" ]]; then
+    # --- Linux (Native Package Manager) ---
+    log_info "Installing packages via native package manager..."
+    
+    if command -v apt-get &> /dev/null; then
+        sudo apt-get update
+        sudo apt-get install -y zsh git curl stow neovim tmux ripgrep fzf bat lua5.3 luajit luarocks
+        # Note: bat is often 'batcat' on Debian/Ubuntu
+        mkdir -p ~/.local/bin
+        ln -sf /usr/bin/batcat ~/.local/bin/bat 2>/dev/null || true
+
+    elif command -v dnf &> /dev/null; then
+        sudo dnf install -y zsh git curl stow neovim tmux ripgrep fzf bat lua luajit luarocks
+    elif command -v pacman &> /dev/null; then
+        sudo pacman -Syu --noconfirm zsh git curl stow neovim tmux ripgrep fzf bat lua luajit luarocks lazygit
+    else
+        log_error "Unsupported Linux package manager. Please install dependencies manually."
+    fi
+
+    # Install lazygit (not in apt/dnf repos)
+    if ! command -v lazygit &> /dev/null; then
+        log_info "Installing lazygit..."
+        LAZYGIT_VERSION=$(curl -s "https://api.github.com/repos/jesseduffield/lazygit/releases/latest" | grep -Po '"tag_name": "v\K[^"]*')
+        ARCH=$(uname -m)
+        case "$ARCH" in
+            x86_64)  LAZYGIT_ARCH="x86_64" ;;
+            aarch64) LAZYGIT_ARCH="arm64" ;;
+            armv7l)  LAZYGIT_ARCH="armv6" ;;
+            *)       log_error "Unsupported architecture: $ARCH"; LAZYGIT_ARCH="" ;;
+        esac
+        if [[ -n "$LAZYGIT_ARCH" ]]; then
+            curl -Lo /tmp/lazygit.tar.gz "https://github.com/jesseduffield/lazygit/releases/latest/download/lazygit_${LAZYGIT_VERSION}_Linux_${LAZYGIT_ARCH}.tar.gz"
+            tar xf /tmp/lazygit.tar.gz -C /tmp lazygit
+            sudo install /tmp/lazygit /usr/local/bin
+            rm /tmp/lazygit.tar.gz /tmp/lazygit
+        fi
+    fi
+
+    # Install tree-sitter CLI
+    if ! command -v tree-sitter &> /dev/null; then
+        log_info "Installing tree-sitter CLI..."
+        if command -v cargo &> /dev/null; then
+            cargo install tree-sitter-cli
+        elif command -v npm &> /dev/null; then
+            npm install -g tree-sitter-cli
+        else
+            log_info "Skipping tree-sitter CLI (requires cargo or npm)"
+        fi
+    fi
+
+    # Manually install Zsh plugins & Powerlevel10k
+    ZSH_PLUGINS_DIR="$HOME/.local/share"
+    mkdir -p "$ZSH_PLUGINS_DIR"
+
+    install_plugin() {
+        local repo="$1"
+        local name="$2"
+        local target="$ZSH_PLUGINS_DIR/$name"
+        if [ ! -d "$target" ]; then
+            log_info "Cloning $name..."
+            git clone --depth=1 "https://github.com/$repo" "$target"
+        else
+            log_info "Updating $name..."
+            git -C "$target" pull
+        fi
+    }
+
+    install_plugin "romkatv/powerlevel10k" "powerlevel10k"
+    install_plugin "zsh-users/zsh-autosuggestions" "zsh-autosuggestions"
+    install_plugin "zsh-users/zsh-syntax-highlighting" "zsh-syntax-highlighting"
+    install_plugin "marlonrichert/zsh-autocomplete" "zsh-autocomplete"
+
+    # Install Nerd Fonts for Powerlevel10k
+    log_info "Installing Nerd Fonts..."
+    FONT_DIR="$HOME/.local/share/fonts"
+    mkdir -p "$FONT_DIR"
+    FONT_URL="https://github.com/ryanoasis/nerd-fonts/releases/latest/download/FiraMono.tar.xz"
+    curl -Lo /tmp/FiraMono.tar.xz "$FONT_URL"
+    tar xf /tmp/FiraMono.tar.xz -C "$FONT_DIR"
+    rm /tmp/FiraMono.tar.xz
+    fc-cache -fv
 fi
 
-# 4. Install Packages
-BREW_PKGS=(
-  bash
-  bat
-  lua
-  luajit
-  neovim
-  tmux
-  tree-sitter
-  powerlevel10k
-  zsh-autocomplete
-  zsh-syntax-highlighting
-  zsh-autosuggestions
-  stow
-  ripgrep
-  fzf
-  luarocks
-  lazygit
-)
-
-log_info "Installing packages..."
-brew update
-brew install "${BREW_PKGS[@]}"
-brew autoremove
-brew cleanup
-
-# 5. Setup Bat Theme
+# 4. Setup Bat Theme
 log_info "Setting up Bat theme..."
-BAT_CONFIG_DIR="$(bat --config-dir)"
+BAT_CONFIG_DIR="$(bat --config-dir 2>/dev/null || echo "$HOME/.config/bat")"
 mkdir -p "$BAT_CONFIG_DIR/themes"
 curl -s -o "$BAT_CONFIG_DIR/themes/tokyonight_night.tmTheme" https://raw.githubusercontent.com/folke/tokyonight.nvim/main/extras/sublime/tokyonight_night.tmTheme
-bat cache --build
+if command -v bat &> /dev/null; then
+    bat cache --build
+elif command -v batcat &> /dev/null; then
+    batcat cache --build
+fi
 
-# 6. Run Stow
+# 5. Run Stow
 log_info "Applying dotfiles with Stow..."
 if [ ! -d "$DOTFILES_DIR" ]; then
     log_error "$DOTFILES_DIR not found!"
@@ -95,20 +168,11 @@ fi
 cd "$DOTFILES_DIR"
 for module in */; do
     module="${module%/}"
-    # Skip .git, .claude, etc. if they are directories
-    if [[ "$module" == ".git" || "$module" == ".claude" ]]; then
-        continue
-    fi
-    
-    # Only stow if it looks like a package (contains config files)
-    # Actually, the user's structure has `nvim`, `tmux`, `zsh`, `ghostty` as folders
-    # The loop `for module in */` matches these.
-    
-    echo "Stowing $module..."
+    log_info "Stowing $module..."
     stow -v --restow --target="$HOME" "$module" 2>/dev/null || stow -v --target="$HOME" "$module"
 done
 
-# 7. Install TPM (Tmux Plugin Manager)
+# 6. Install TPM (Tmux Plugin Manager)
 if [ ! -d "$HOME/.tmux/plugins/tpm" ]; then
     log_info "Installing TPM..."
     git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
@@ -116,10 +180,8 @@ else
     log_info "TPM already installed."
 fi
 
-# 8. Final Check
+# 7. Final Check
 log_success "Installation Complete!"
 echo "--------------------------------------------------------"
-echo "If you are on Linux, you might need to add Homebrew to your PATH manually in your profile if not already there:"
-echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"'
-echo "--------------------------------------------------------"
 echo "Restart your terminal or run 'source ~/.zshrc' to apply changes."
+
