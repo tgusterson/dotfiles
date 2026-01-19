@@ -4,75 +4,22 @@ Configuration files for Neovim, tmux, Ghostty, and more are managed with [GNU St
 
 ### Setup
 
-Requires: Homebrew
+Requires: `git`, `curl`
 
-Open your terminal and run the below:
+To install on macOS or Linux (via Linuxbrew), run:
 
 ```bash
-# 1. Clone dotfiles into ~/.dotfiles
-REPO_URL="https://github.com/tgusterson/dotfiles"
-CLONE_DIR="$HOME/.dotfiles"
-
-if [ -d "$CLONE_DIR/.git" ]; then
-  echo "↻ Updating existing dotfiles..."
-  git -C "$CLONE_DIR" pull --ff-only
-else
-  echo "→ Cloning dotfiles into your home directory..."
-  git clone "$REPO_URL" "$CLONE_DIR"
-fi
-
-# 2. Install Homebrew packages
-BREW_PKGS=(
-  bash,
-  bat
-  lua
-  luajit
-  neovim
-  tmux
-  tree-sitter
-  powerlevel10k
-  zsh-autocomplete
-  zsh-syntax-highlighting
-  zsh-autosuggestions
-  stow
-  ripgrep
-  fzf
-  luarocks
-  lazygit
-)
-
-echo "→ Installing Homebrew packages: ${BREW_PKGS[*]}..."
-brew update
-brew upgrade
-brew install "${BREW_PKGS[@]}"
-brew autoremove
-brew cleanup
-
-# 3. Setup bat theme
-mkdir -p "$(bat --config-dir)/themes"
-cd "$(bat --config-dir)/themes"
-curl -O https://raw.githubusercontent.com/folke/tokyonight.nvim/main/extras/sublime/tokyonight_night.tmTheme
-bat cache --build
-
-# 4. Stow every directory under ~/.dotfiles
-DOTFILES_DIR="$HOME/.dotfiles"
-
-if [ ! -d "$DOTFILES_DIR" ]; then
-  echo "✗ Directory $DOTFILES_DIR not found — create it and put your stow modules there."
-  exit 1
-fi
-
-echo "→ Applying GNU Stow for each module in $DOTFILES_DIR..."
-cd "$DOTFILES_DIR"
-
-for module in */; do
-  module="${module%/}"
-  printf "\n» stow %-15s" "$module"
-  stow "$module"
-done
-
-# 5. Clone TPM
-git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
-
-echo -e "\n\n✅ All done! Run 'Ctrl + Shift + I' in tmux to install plugins.\n""
+git clone https://github.com/tgusterson/dotfiles ~/.dotfiles
+cd ~/.dotfiles
+./install.sh
 ```
+
+The script will:
+1. Install Homebrew (if missing).
+2. Install required packages (Neovim, Tmux, Zsh plugins, etc.).
+3. Setup the Bat theme (TokyoNight).
+4. Symlink dotfiles using Stow.
+5. Install TPM (Tmux Plugin Manager).
+
+**Note:** After installation, restart your terminal. In Tmux, press `Prefix + I` to install plugins.
+
