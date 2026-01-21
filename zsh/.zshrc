@@ -106,6 +106,9 @@ export PATH="$PATH:/usr/local/go/bin:$GOPATH/bin"
 # Ensure /usr/local/bin is in path
 export PATH="$PATH:/usr/local/bin"
 
+# Claude Code
+export PATH="$HOME/.local/bin:$PATH"
+
 # Bat theme
 export BAT_THEME="tokyonight_night"
 
