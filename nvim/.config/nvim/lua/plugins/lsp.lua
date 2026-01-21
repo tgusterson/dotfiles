@@ -105,6 +105,30 @@ return {
 				})
 			)
 
+
+			-- Configure pull diagnostics for Biome
+			vim.api.nvim_create_autocmd("LspAttach", {
+				callback = function(args)
+					local client = vim.lsp.get_client_by_id(args.data.client_id)
+					if client and client.name == "biome" then
+						-- Enable pull diagnostics if supported
+						if client.supports_method("textDocument/diagnostic") then
+							vim.lsp.diagnostic.enable(true, { bufnr = args.buf })
+
+							-- Refresh diagnostics on save
+							vim.api.nvim_create_autocmd("BufWritePost", {
+								buffer = args.buf,
+								callback = function()
+									vim.lsp.buf_request(args.buf, "textDocument/diagnostic", {
+										textDocument = vim.lsp.util.make_text_document_params(args.buf),
+									})
+								end,
+							})
+						end
+					end
+				end,
+			})
+
 			vim.lsp.enable(ensure_installed.lsp_list)
 		end,
 	},
