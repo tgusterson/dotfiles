@@ -10,6 +10,7 @@ M.lsp = {
 	marksman = {},
 	pyright = {},
 	sqlls = {},
+	gopls = {},
 }
 
 M.linters = {
@@ -17,6 +18,7 @@ M.linters = {
 	markdown = { "markdownlint" },
 	html = { "htmlhint" },
 	lua = { "luacheck" },
+	go = { "golangci-lint" },
 }
 
 M.formatters = {
@@ -29,6 +31,7 @@ M.formatters = {
 	javascriptreact = { "prettierd", "biome" },
 	graphql = { "biome" },
 	sql = { "sql-formatter" },
+	go = { "goimports" },
 }
 
 function M.extract_lsp_servers(lsp_table)
