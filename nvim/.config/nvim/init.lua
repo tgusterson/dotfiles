@@ -30,16 +30,6 @@ vim.diagnostic.config({
 	update_in_insert = false,
 })
 
--- Set up CFML filetype detection
-vim.filetype.add({
-	extension = {
-		cfc = "cfscript",   -- ColdFusion Component (script-style syntax)
-		cfs = "cfscript",   -- ColdFusion Script (pure CFScript)
-		cfm = "cfhtml",     -- ColdFusion Markup (HTML mixed with CFML tags)
-		cfml = "cfhtml",    -- ColdFusion Markup Language
-	},
-})
-
 -- Case-insensitive searching UNLESS \C or one or more capital letters in the search term
 vim.opt.ignorecase = true
 vim.opt.smartcase = true
