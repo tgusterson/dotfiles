@@ -28,50 +28,8 @@ return {
 		dependencies = {
 			"nvim-treesitter/nvim-treesitter-textobjects",
 		},
-		config = function()
-			local parser_config = require("nvim-treesitter.parsers").get_parser_configs()
-
-			-- Register CFML parser (for .cfc files - ColdFusion Components)
-			parser_config.cfml = {
-				install_info = {
-					url = "https://github.com/cfmleditor/tree-sitter-cfml",
-					files = { "src/parser.c", "src/scanner.c" },
-					branch = "master",
-					generate_requires_npm = false,
-					requires_generate_from_grammar = false,
-					location = "cfml",
-				},
-				filetype = "cfml",
-			}
-
-			-- Register CFScript parser (for .cfs and .cfc files - pure CFScript)
-			parser_config.cfscript = {
-				install_info = {
-					url = "https://github.com/cfmleditor/tree-sitter-cfml",
-					files = { "src/parser.c", "src/scanner.c" },
-					branch = "master",
-					generate_requires_npm = false,
-					requires_generate_from_grammar = false,
-					location = "cfscript",
-				},
-				filetype = "cfscript",
-			}
-
-			-- Register CFHTML parser (for .cfm and .cfml files - HTML/CFML mixed)
-			parser_config.cfhtml = {
-				install_info = {
-					url = "https://github.com/cfmleditor/tree-sitter-cfml",
-					files = { "src/parser.c", "src/scanner.c" },
-					branch = "master",
-					generate_requires_npm = false,
-					requires_generate_from_grammar = false,
-					location = "cfhtml",
-				},
-				filetype = "cfhtml",
-			}
-
-			require("nvim-treesitter.configs").setup({
-				ensure_installed = {
+		opts = {
+			ensure_installed = {
 				"bash",
 				"c",
 				"diff",
@@ -135,10 +93,9 @@ return {
 						["@function.outer"] = "V",
 						["@class.outer"] = "<c-v>",
 					},
-				include_surrounding_whitespace = true,
+					include_surrounding_whitespace = true,
+				},
 			},
 		},
-	})
-		end,
 	},
 }
