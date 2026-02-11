@@ -24,10 +24,8 @@ return {
 	{
 		"nvim-treesitter/nvim-treesitter",
 		build = ":TSUpdate",
-		main = "nvim-treesitter.configs",
-		dependencies = {
-			"nvim-treesitter/nvim-treesitter-textobjects",
-		},
+		lazy = false,
+		main = "nvim-treesitter",
 		opts = {
 			ensure_installed = {
 				"bash",
@@ -96,6 +94,9 @@ return {
 					include_surrounding_whitespace = true,
 				},
 			},
+		},
+		dependencies = {
+			"nvim-treesitter/nvim-treesitter-textobjects",
 		},
 	},
 }
