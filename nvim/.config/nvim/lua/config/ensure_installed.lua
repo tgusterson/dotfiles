@@ -11,6 +11,7 @@ M.lsp = {
 	pyright = {},
 	sqlls = {},
 	gopls = {},
+	clangd = {},
 }
 
 M.linters = {
@@ -32,6 +33,7 @@ M.formatters = {
 	graphql = { "biome" },
 	sql = { "sql-formatter" },
 	go = { "goimports" },
+	c = { "clang-format" },
 }
 
 function M.extract_lsp_servers(lsp_table)
