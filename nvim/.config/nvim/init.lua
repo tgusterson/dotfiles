@@ -28,6 +28,11 @@ vim.opt.tabstop = 2
 vim.opt.softtabstop = 2
 vim.opt.expandtab = true
 vim.g.have_nerd_font = true
+vim.opt.path:append { "**" }
+
+-- Undecided on this:
+-- vim.opt.wildmenu = true
+-- vim.opt.wildmode = 'longest,list,full'
 
 vim.diagnostic.config({
 	virtual_text = true,
@@ -67,11 +72,5 @@ vim.keymap.set("i", "<C-j>", "<Esc>la", { noremap = true, silent = true, desc = 
 -- vim.keymap.set("n", "<leader>z", vim.cmd.cclose, { noremap = true, silent = true, desc = "Close quickfix" })
 -- vim.keymap.set("n", "<M-j>", "<cmd>cnext<CR>", { noremap = true, silent = true, desc = "Next quickfix" })
 -- vim.keymap.set("n", "<M-k>", "<cmd>cprev<CR>", { noremap = true, silent = true, desc = "Prev quickfix" })
-
--- Disable arrow keys
-vim.keymap.set("n", "<left>",  '<cmd>echo "Use h"<CR>')
-vim.keymap.set("n", "<right>", '<cmd>echo "Use l"<CR>')
-vim.keymap.set("n", "<up>",    '<cmd>echo "Use k"<CR>')
-vim.keymap.set("n", "<down>",  '<cmd>echo "Use j"<CR>')
 
 require("config.lazy")
