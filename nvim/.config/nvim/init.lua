@@ -34,50 +34,7 @@ vim.diagnostic.config({
 vim.opt.ignorecase = true
 vim.opt.smartcase = true
 
--- [[ Basic Keymaps ]]
---  See `:help vim.keymap.set()`
-vim.keymap.set("n", "<leader>y", '"+y', { noremap = true, silent = true })
-vim.keymap.set("v", "<leader>y", '"+y', { noremap = true, silent = true })
-vim.keymap.set("n", "<leader>;", ":", { noremap = true, desc = "Command mode" })
-vim.keymap.set("n", "<shift>:", ";", { noremap = true })
-
--- Copy path using <leader>cp
-vim.keymap.set(
-	"n",
-	"<leader>cp",
-	':let @+ = expand("%:p") | echo "Copied: " . @+<CR>',
-	{ noremap = true, desc = "Copy file path" }
-)
-
--- Leave insert mode, press l, press a. I use this as an easy way to "[j]ump" out of autopaired characters.
--- Could look into different autopairing plugin which offers this feature but this is good enough for now.
-vim.keymap.set("i", "<C-j>", "<Esc>la", { noremap = true, silent = true })
-
--- Press <leader>z to close the quickfix window
-vim.keymap.set("n", "<leader>z", vim.cmd.cclose, { noremap = true, silent = true, desc = "Close quickfix" })
-
--- Press opt (meta) + j/k to navigate through the quickfix list
-vim.keymap.set("n", "<M-j>", "<cmd>cnext<CR>", { noremap = true, silent = true, desc = "Next quickfix" })
-vim.keymap.set("n", "<M-k>", "<cmd>cprev<CR>", { noremap = true, silent = true, desc = "Previous quickfix" })
-
--- Press <leader>y to copy the selected text to the system clipboard
-vim.keymap.set("n", "<leader>y", '"+y', { noremap = true, silent = true })
-vim.keymap.set("v", "<leader>y", '"+y', { noremap = true, silent = true })
-
--- Clear highlights on search when pressing <Esc> in normal mode
---  See `:help hlsearch`
-vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>")
-
--- Diagnostic keymaps
-vim.keymap.set("n", "<leader>q", vim.diagnostic.setloclist, { desc = "Open diagnostic [Q]uickfix list" })
-
--- Keybinds to make split navigation easier.
---  Use CTRL+<hjkl> to switch between windows
---  See `:help wincmd` for a list of all window commands
-vim.keymap.set("n", "<C-h>", "<C-w><C-h>", { desc = "Move focus to the left window" })
-vim.keymap.set("n", "<C-l>", "<C-w><C-l>", { desc = "Move focus to the right window" })
-vim.keymap.set("n", "<C-j>", "<C-w><C-j>", { desc = "Move focus to the lower window" })
-vim.keymap.set("n", "<C-k>", "<C-w><C-k>", { desc = "Move focus to the upper window" })
+require("config.keymaps")
 
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
