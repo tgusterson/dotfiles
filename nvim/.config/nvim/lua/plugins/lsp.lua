@@ -81,7 +81,7 @@ return {
 					vim.diagnostic.jump({ count = -1, float = true })
 				end, "Previous Diagnostic")
 				map("n", "<leader>e", vim.diagnostic.open_float, "Show Diagnostic")
-				map("n", "<leader>q", vim.diagnostic.setloclist, "Populate Loclist with Diagnostics")
+				map("n", "<leader>q", vim.diagnostic.setqflist, "Populate Quickfix with Diagnostics")
 			end
 
 			vim.lsp.config("*", {
@@ -111,6 +111,7 @@ return {
 				callback = function(args)
 					local client = vim.lsp.get_client_by_id(args.data.client_id)
 					if client and client.name == "biome" then
+						client.offset_encoding = "utf-16"
 						-- Enable pull diagnostics if supported
 						if client.supports_method("textDocument/diagnostic") then
 							vim.lsp.diagnostic.enable(true, { bufnr = args.buf })
