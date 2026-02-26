@@ -16,7 +16,6 @@ M.lsp = {
 
 M.linters = {
 	python = { "flake8" },
-	markdown = { "markdownlint" },
 	html = { "htmlhint" },
 	lua = { "luacheck" },
 	go = { "golangci-lint" },

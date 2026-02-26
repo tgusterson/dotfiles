@@ -109,6 +109,27 @@ export PATH="$PATH:/usr/local/bin"
 # Claude Code
 export PATH="$HOME/.local/bin:$PATH"
 
+# Notes directory
+export NOTES_DIR="$HOME/notes"
+
+# Open a note by name, or inbox.md if no argument given
+note() {
+  nvim "$NOTES_DIR/${1:-inbox}.md"
+}
+
+# Search notes with rg+fzf, open result in nvim at matching line
+ns() {
+  local result file line
+  result=$(rg --color=always --line-number --smart-case "${1:-.}" "$NOTES_DIR" \
+    | fzf --ansi --delimiter=: \
+          --preview 'bat --color=always --highlight-line {2} {1}' \
+          --preview-window 'right:60%,+{2}+3/3')
+  [[ -z "$result" ]] && return
+  file=$(cut -d: -f1 <<< "$result")
+  line=$(cut -d: -f2 <<< "$result")
+  nvim +"$line" "$file"
+}
+
 # Bat theme
 export BAT_THEME="tokyonight_night"
 

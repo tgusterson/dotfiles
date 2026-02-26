@@ -133,6 +133,26 @@ return {
 			builtin.live_grep({ grep_open_files = true, prompt_title = "Live Grep in Open Files" })
 		end, vim.tbl_extend("keep", opts, { desc = "[S]earch [/] in Open Files" }))
 		vim.keymap.set("n", "<leader>sn", function()
+			local notes_dir = os.getenv("NOTES_DIR") or vim.fn.expand("~/notes")
+			if vim.fn.isdirectory(notes_dir) == 0 then
+				vim.notify("Notes directory not found: " .. notes_dir, vim.log.levels.WARN)
+				return
+			end
+			builtin.live_grep({ search_dirs = { notes_dir }, prompt_title = "Search Notes" })
+		end, vim.tbl_extend("keep", opts, { desc = "[S]earch [N]otes" }))
+		vim.keymap.set("n", "<leader>en", function()
+			local notes_dir = os.getenv("NOTES_DIR") or vim.fn.expand("~/notes")
+			if vim.fn.isdirectory(notes_dir) == 0 then
+				vim.notify("Notes directory not found: " .. notes_dir, vim.log.levels.WARN)
+				return
+			end
+			builtin.find_files({ cwd = notes_dir, prompt_title = "Edit Note" })
+		end, vim.tbl_extend("keep", opts, { desc = "[E]dit [N]ote" }))
+		vim.keymap.set("n", "<leader>ni", function()
+			local notes_dir = os.getenv("NOTES_DIR") or vim.fn.expand("~/notes")
+			vim.cmd("edit " .. notes_dir .. "/inbox.md")
+		end, vim.tbl_extend("keep", opts, { desc = "[N]otes [I]nbox" }))
+		vim.keymap.set("n", "<leader>sN", function()
 			builtin.find_files({ cwd = vim.fn.stdpath("config") })
 		end, vim.tbl_extend("keep", opts, { desc = "[S]earch [N]eovim files" }))
 	end,
