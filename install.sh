@@ -70,6 +70,7 @@ BREW_PKGS=(
   fzf
   luarocks
   lazygit
+  tldr
 )
 
 log_info "Installing packages..."
