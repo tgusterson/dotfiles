@@ -56,6 +56,7 @@ fi
 BREW_PKGS=(
   bash
   bat
+  glow
   lua
   luajit
   neovim

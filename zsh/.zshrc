@@ -126,7 +126,7 @@ sn() {
       | sed 's|.*|&:1:-- filename match --|'
     rg --color=always --line-number --smart-case --no-ignore-vcs "${1:-.}" "$NOTES_DIR"
   } | fzf --ansi --delimiter=: \
-          --preview 'bat --color=always --highlight-line {2} {1}' \
+          --preview 'if [[ {1} == *.md ]]; then CLICOLOR_FORCE=1 glow -s dark -w 60 {1}; else bat --color=always --highlight-line {2} {1}; fi' \
           --preview-window 'right:60%,+{2}+3/3')
   [[ -z "$result" ]] && return
   file=$(cut -d: -f1 <<< "$result")
