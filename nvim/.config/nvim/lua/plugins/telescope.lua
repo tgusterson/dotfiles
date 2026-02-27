@@ -138,7 +138,7 @@ return {
 				vim.notify("Notes directory not found: " .. notes_dir, vim.log.levels.WARN)
 				return
 			end
-			builtin.live_grep({ search_dirs = { notes_dir }, prompt_title = "Search Notes" })
+			builtin.live_grep({ search_dirs = { notes_dir }, prompt_title = "Search Notes", additional_args = { "--no-ignore-vcs" } })
 		end, vim.tbl_extend("keep", opts, { desc = "[S]earch [N]otes" }))
 		vim.keymap.set("n", "<leader>en", function()
 			local notes_dir = os.getenv("NOTES_DIR") or vim.fn.expand("~/notes")
@@ -146,7 +146,7 @@ return {
 				vim.notify("Notes directory not found: " .. notes_dir, vim.log.levels.WARN)
 				return
 			end
-			builtin.find_files({ cwd = notes_dir, prompt_title = "Edit Note" })
+			builtin.find_files({ cwd = notes_dir, prompt_title = "Edit Note", no_ignore = true })
 		end, vim.tbl_extend("keep", opts, { desc = "[E]dit [N]ote" }))
 		vim.keymap.set("n", "<leader>ni", function()
 			local notes_dir = os.getenv("NOTES_DIR") or vim.fn.expand("~/notes")

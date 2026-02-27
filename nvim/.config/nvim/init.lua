@@ -1,5 +1,4 @@
 -- ** Keymaps & options available in Neovim and VSCode **
-
 vim.o.autoread = true
 
 -- Check for external changes

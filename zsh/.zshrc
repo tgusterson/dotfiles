@@ -118,10 +118,14 @@ note() {
 }
 
 # Search notes with rg+fzf, open result in nvim at matching line
-ns() {
+sn() {
   local result file line
-  result=$(rg --color=always --line-number --smart-case "${1:-.}" "$NOTES_DIR" \
-    | fzf --ansi --delimiter=: \
+  result=$({
+    rg --files --no-ignore-vcs "$NOTES_DIR" \
+      | grep -i "${1:-.}" \
+      | sed 's|.*|&:1:-- filename match --|'
+    rg --color=always --line-number --smart-case --no-ignore-vcs "${1:-.}" "$NOTES_DIR"
+  } | fzf --ansi --delimiter=: \
           --preview 'bat --color=always --highlight-line {2} {1}' \
           --preview-window 'right:60%,+{2}+3/3')
   [[ -z "$result" ]] && return
