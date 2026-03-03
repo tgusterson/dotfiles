@@ -62,6 +62,41 @@ if (( $+commands[fzf] )); then
   source <(fzf --zsh)
 fi
 
+# Gita zsh completion
+if (( $+commands[gita] )); then
+  _gita_completions()
+  {
+    local cur commands repos cmd
+    local COMP_CWORD COMP_WORDS
+    read -cn COMP_CWORD
+    read -Ac COMP_WORDS
+
+    cur=${COMP_WORDS[COMP_CWORD]}
+    cmd=${COMP_WORDS[2]}
+
+    commands=`gita -h | sed '2q;d' | sed 's/[{}.,]/ /g'`
+    repos=`gita ls`
+
+    if [ -z "$cmd" ]; then
+      reply=($(compgen -W "${commands}" ${cur}))
+    else
+      cmd_reply=($(compgen -W "${commands}" ${cmd}))
+      case $cmd in
+        add)
+          reply=(cmd_reply $(compgen -d ${cur}))
+          ;;
+        ll)
+          return
+          ;;
+        *)
+          reply=($cmd_reply $(compgen -W "${repos}" ${cur}))
+          ;;
+      esac
+    fi
+  }
+  compctl -K _gita_completions gita
+fi
+
 # ------------------------------------------------------------------------------
 # 5. LANGUAGE & TOOL INITIALIZATION
 # ------------------------------------------------------------------------------
@@ -134,6 +169,13 @@ sn() {
   nvim +"$line" "$file"
 }
 
+# Open lazygit in a fuzzy-selected repo
+lg() {
+  local repo
+  repo=$(find ~/repos -name ".git" -type d -maxdepth 3 | sed 's|/.git||' | fzf -q "${1:-}" --select-1)
+  [ -n "$repo" ] && lazygit -p "$repo"
+}
+
 # Bat theme
 export BAT_THEME="tokyonight_night"
 
@@ -142,6 +184,10 @@ export BAT_THEME="tokyonight_night"
 # ------------------------------------------------------------------------------
 alias brew='env PATH="${PATH//$(pyenv root)\/shims:/}" brew'
 # alias pip=/usr/local/bin/pip3 # Removed hardcoded path
+alias gl='gita ll'
+alias gs='gita super'
+alias dotfiles='cd ~/.dotfiles'
+alias notes='cd ~/notes'
 alias inv='nvim $(fzf -m --preview="bat --color=always {}")'
 alias start_my_day="~/start_my_day.sh"
 
@@ -151,3 +197,5 @@ alias start_my_day="~/start_my_day.sh"
 [[ -f "$BREW_PREFIX/share/powerlevel10k/powerlevel10k.zsh-theme" ]] && \
   source "$BREW_PREFIX/share/powerlevel10k/powerlevel10k.zsh-theme"
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+
+eval "$(zoxide init zsh --cmd cd)"

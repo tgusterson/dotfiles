@@ -72,6 +72,8 @@ BREW_PKGS=(
   luarocks
   lazygit
   tldr
+  zoxide
+  pipx
 )
 
 log_info "Installing packages..."
@@ -110,7 +112,15 @@ for module in */; do
     stow -v --restow --target="$HOME" "$module" 2>/dev/null || stow -v --target="$HOME" "$module"
 done
 
-# 7. Install TPM (Tmux Plugin Manager)
+# 7. Install gita via pipx
+if (( $+commands[pipx] )); then
+  log_info "Installing gita via pipx..."
+  pipx install gita
+else
+  log_error "pipx not found, skipping gita install."
+fi
+
+# 8. Install TPM (Tmux Plugin Manager)
 if [ ! -d "$HOME/.tmux/plugins/tpm" ]; then
     log_info "Installing TPM..."
     git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
@@ -118,7 +128,7 @@ else
     log_info "TPM already installed."
 fi
 
-# 8. Final Check
+# 9. Final Check
 log_success "Installation Complete!"
 echo "--------------------------------------------------------"
 echo "If you are on Linux, you might need to add Homebrew to your PATH manually in your profile if not already there:"
