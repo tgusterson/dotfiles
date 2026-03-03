@@ -43,8 +43,8 @@ return {
 				end
 
 				map("n", "gd", function()
-				require("telescope.builtin").lsp_definitions()
-			end, "Go to Definition")
+					require("telescope.builtin").lsp_definitions()
+				end, "Go to Definition")
 				map("n", "K", vim.lsp.buf.hover, "Hover Documentation")
 				map("n", "gi", vim.lsp.buf.implementation, "Go to Implementation")
 				map("n", "gr", require("telescope.builtin").lsp_references, "[G]oto [R]eferences")
@@ -60,7 +60,9 @@ return {
 				end, "Previous Diagnostic")
 				map("n", "<leader>e", function()
 					local _, winnr = vim.diagnostic.open_float()
-					if winnr then vim.api.nvim_set_current_win(winnr) end
+					if winnr then
+						vim.api.nvim_set_current_win(winnr)
+					end
 				end, "Show Diagnostic")
 				map("n", "<leader>q", vim.diagnostic.setqflist, "Populate Quickfix with Diagnostics")
 			end
@@ -86,12 +88,9 @@ return {
 				})
 			)
 
-			vim.api.nvim_create_autocmd("LspAttach", {
-				callback = function(args)
-					local client = vim.lsp.get_client_by_id(args.data.client_id)
-					if client and client.name == "biome" then
-						client.offset_encoding = "utf-16"
-					end
+			vim.lsp.config("biome", {
+				on_init = function(client)
+					client.offset_encoding = "utf-16"
 				end,
 			})
 		end,
