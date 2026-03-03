@@ -35,12 +35,16 @@ else
 fi
 
 # ------------------------------------------------------------------------------
-# 3. KEYMAPS (VI MODE)
+# 3. KEYMAPS (EMACS MODE)
 # ------------------------------------------------------------------------------
-# Set Vi mode BEFORE loading plugins so they bind to the correct keymap
-bindkey -v
-bindkey -M vicmd ":" undefined-key
-export KEYTIMEOUT=1 # Reduces delay when hitting ESC
+# Defaulting to Emacs mode for simplicity, with a shortcut to edit in Neovim.
+# (Uncomment below to re-enable Vi mode)
+# bindkey -v
+# bindkey -M vicmd ":" undefined-key
+# export KEYTIMEOUT=1
+
+autoload -U edit-command-line
+zle -N edit-command-line
 
 # ------------------------------------------------------------------------------
 # 4. PLUGINS & COMPLETIONS
@@ -199,3 +203,8 @@ alias start_my_day="~/start_my_day.sh"
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
 eval "$(zoxide init zsh --cmd cd)"
+
+# Force emacs keybindings last, after all plugins have loaded.
+# This ensures nothing (zsh-autocomplete, fzf, etc.) silently switches to vi mode.
+bindkey -e
+bindkey '^v' edit-command-line
