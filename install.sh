@@ -113,11 +113,24 @@ for module in */; do
 done
 
 # 7. Install gita via pipx
-if (( $+commands[pipx] )); then
-  log_info "Installing gita via pipx..."
-  pipx install gita
+# Need to ensure pipx is in PATH after brew install
+PIPX_PATH=""
+if [[ "$MACHINE" == "Mac" ]]; then
+    # pipx is typically in /opt/homebrew/bin on Apple Silicon or /usr/local/bin on Intel
+    if [[ -f /opt/homebrew/bin/pipx ]]; then
+        PIPX_PATH="/opt/homebrew/bin/pipx"
+    elif [[ -f /usr/local/bin/pipx ]]; then
+        PIPX_PATH="/usr/local/bin/pipx"
+    fi
+elif [[ "$MACHINE" == "Linux" ]]; then
+    PIPX_PATH="/home/linuxbrew/.linuxbrew/bin/pipx"
+fi
+
+if [[ -n "$PIPX_PATH" ]]; then
+    log_info "Installing gita via pipx..."
+    "$PIPX_PATH" install gita
 else
-  log_error "pipx not found, skipping gita install."
+    log_error "pipx not found, skipping gita install."
 fi
 
 # 8. Install TPM (Tmux Plugin Manager)
