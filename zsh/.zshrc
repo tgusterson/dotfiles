@@ -194,6 +194,7 @@ alias dotfiles='cd ~/.dotfiles'
 alias notes='cd ~/notes'
 alias inv='nvim $(fzf -m --preview="bat --color=always {}")'
 alias start_my_day="~/start_my_day.sh"
+alias ollama-serve='OLLAMA_FLASH_ATTENTION="1" OLLAMA_KV_CACHE_TYPE="q8_0" /opt/homebrew/opt/ollama/bin/ollama serve'
 
 # ------------------------------------------------------------------------------
 # 7. THEME (POWERLEVEL10K)
