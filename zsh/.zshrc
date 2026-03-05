@@ -35,14 +35,11 @@ else
 fi
 
 # ------------------------------------------------------------------------------
-# 3. KEYMAPS (EMACS MODE)
+# 3. KEYMAPS (VI MODE)
 # ------------------------------------------------------------------------------
-# Defaulting to Emacs mode for simplicity, with a shortcut to edit in Neovim.
-# (Uncomment below to re-enable Vi mode)
-# bindkey -v
-# bindkey -M vicmd ":" undefined-key
-# export KEYTIMEOUT=1
-
+bindkey -v
+bindkey -M vicmd ":" undefined-key
+export KEYTIMEOUT=1
 autoload -U edit-command-line
 zle -N edit-command-line
 
@@ -176,7 +173,6 @@ alias ollama-serve='OLLAMA_FLASH_ATTENTION="1" OLLAMA_KV_CACHE_TYPE="q8_0" /opt/
 
 eval "$(zoxide init zsh --cmd cd)"
 
-# Force emacs keybindings last, after all plugins have loaded.
-# This ensures nothing (zsh-autocomplete, fzf, etc.) silently switches to vi mode.
-bindkey -e
-bindkey '^v' edit-command-line
+bindkey -v
+bindkey -M vicmd '^v' edit-command-line
+bindkey -M viins '^v' edit-command-line
