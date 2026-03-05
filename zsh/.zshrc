@@ -67,38 +67,9 @@ if (( $+commands[fzf] )); then
 fi
 
 # Gita zsh completion
-if (( $+commands[gita] )); then
-  _gita_completions()
-  {
-    local cur commands repos cmd
-    local COMP_CWORD COMP_WORDS
-    read -cn COMP_CWORD
-    read -Ac COMP_WORDS
-
-    cur=${COMP_WORDS[COMP_CWORD]}
-    cmd=${COMP_WORDS[2]}
-
-    commands=`gita -h | sed '2q;d' | sed 's/[{}.,]/ /g'`
-    repos=`gita ls`
-
-    if [ -z "$cmd" ]; then
-      reply=($(compgen -W "${commands}" ${cur}))
-    else
-      cmd_reply=($(compgen -W "${commands}" ${cmd}))
-      case $cmd in
-        add)
-          reply=(cmd_reply $(compgen -d ${cur}))
-          ;;
-        ll)
-          return
-          ;;
-        *)
-          reply=($cmd_reply $(compgen -W "${repos}" ${cur}))
-          ;;
-      esac
-    fi
-  }
-  compctl -K _gita_completions gita
+if (( $+commands[gita] )) && [[ -f ~/.gita-completion.zsh ]]; then
+  autoload -U +X bashcompinit && bashcompinit
+  source ~/.gita-completion.zsh
 fi
 
 # ------------------------------------------------------------------------------

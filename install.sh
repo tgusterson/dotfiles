@@ -133,6 +133,14 @@ else
     log_error "pipx not found, skipping gita install."
 fi
 
+# Download gita zsh completion (if not already present via stow)
+GITA_COMPLETION="$HOME/.gita-completion.zsh"
+if [[ ! -f "$GITA_COMPLETION" ]]; then
+    log_info "Downloading gita zsh completion..."
+    curl -fsSL "https://raw.githubusercontent.com/nosarthur/gita/master/auto-completion/zsh/.gita-completion.zsh" \
+        -o "$GITA_COMPLETION" && log_success "gita completion installed." || log_error "Failed to download gita completion."
+fi
+
 # 8. Install TPM (Tmux Plugin Manager)
 if [ ! -d "$HOME/.tmux/plugins/tpm" ]; then
     log_info "Installing TPM..."
