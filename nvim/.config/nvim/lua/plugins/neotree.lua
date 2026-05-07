@@ -5,22 +5,20 @@ return {
 		branch = "v3.x",
 		dependencies = {
 			"nvim-lua/plenary.nvim",
-			"nvim-tree/nvim-web-devicons", -- not strictly required, but recommended
+			"nvim-tree/nvim-web-devicons",
 			"MunifTanjim/nui.nvim",
-			-- {"3rd/image.nvim", opts = {}}, -- Optional image support in preview window: See `# Preview Mode` for more information
+		},
+		keys = {
+			{ "\\", "<CMD>Neotree toggle<CR>", desc = "Toggle Neotree" },
 		},
 		config = function()
 			require("neo-tree").setup({
 				close_if_last_window = true,
 				buffers = {
-					follow_current_file = {
-						enabled = true,
-					},
+					follow_current_file = { enabled = true },
 				},
 				filesystem = {
-					follow_current_file = {
-						enabled = true,
-					},
+					follow_current_file = { enabled = true },
 				},
 			})
 		end,

@@ -1,98 +1,128 @@
-local ensure_installed = require("config.ensure_installed")
+local tools = require("config.tools")
+
 return {
-	{
-		"williamboman/mason.nvim",
-		build = ":MasonUpdate",
-		config = function()
-			require("mason").setup()
-		end,
-	},
+	{ "williamboman/mason.nvim", opts = {} },
+
 	{
 		"williamboman/mason-lspconfig.nvim",
-		dependencies = { "neovim/nvim-lspconfig" },
-		config = function()
-			require("mason-lspconfig").setup({
-				ensure_installed = ensure_installed.lsp_list,
-				automatic_enable = true,
-			})
-		end,
+		dependencies = { "neovim/nvim-lspconfig", "williamboman/mason.nvim" },
+		opts = {
+			ensure_installed = tools.lsp_list,
+			automatic_enable = true,
+		},
 	},
+
 	{
 		"WhoIsSethDaniel/mason-tool-installer.nvim",
-		config = function()
-			require("mason-tool-installer").setup({
-				ensure_installed = ensure_installed.tools_list,
-				auto_update = true,
-				run_on_start = true,
-				start_delay = 3000,
-				debounce_hours = 5,
-				integrations = { ["mason-lspconfig"] = true },
-			})
-		end,
+		opts = {
+			ensure_installed = tools.tools_list,
+			auto_update = true,
+			run_on_start = true,
+			start_delay = 3000,
+			debounce_hours = 5,
+		},
 	},
+
 	{
 		"neovim/nvim-lspconfig",
-		dependencies = { "saghen/blink.cmp" },
+		dependencies = { "saghen/blink.cmp", "williamboman/mason-lspconfig.nvim" },
 		config = function()
-			local caps = require("blink.cmp").get_lsp_capabilities()
-			local function on_attach(_, bufnr)
-				vim.bo[bufnr].omnifunc = "v:lua.vim.lsp.omnifunc"
-				local opts = { noremap = true, silent = true, buffer = bufnr }
-				local function map(mode, lhs, rhs, desc)
-					vim.keymap.set(mode, lhs, rhs, vim.tbl_extend("force", opts, { desc = desc }))
-				end
-
-				map("n", "gd", function()
-					require("telescope.builtin").lsp_definitions()
-				end, "Go to Definition")
-				map("n", "K", vim.lsp.buf.hover, "Hover Documentation")
-				map("n", "gi", vim.lsp.buf.implementation, "Go to Implementation")
-				map("n", "gr", require("telescope.builtin").lsp_references, "[G]oto [R]eferences")
-				map("n", "<leader>c", vim.lsp.buf.code_action, "Code Action")
-				map("n", "<leader>r", vim.lsp.buf.rename, "Rename Symbol")
-				map("n", "gD", vim.lsp.buf.declaration, "Go to Declaration")
-				map("n", "<leader>h", vim.lsp.buf.signature_help, "Signature Help")
-				map("n", "]d", function()
-					vim.diagnostic.jump({ count = 1, float = true })
-				end, "Next Diagnostic")
-				map("n", "[d", function()
-					vim.diagnostic.jump({ count = -1, float = true })
-				end, "Previous Diagnostic")
-				map("n", "<leader>e", function()
-					local _, winnr = vim.diagnostic.open_float()
-					if winnr then
-						vim.api.nvim_set_current_win(winnr)
-					end
-				end, "Show Diagnostic")
-				map("n", "<leader>q", vim.diagnostic.setqflist, "Populate Quickfix with Diagnostics")
-			end
-
 			vim.lsp.config("*", {
-				on_attach = on_attach,
-				capabilities = caps,
+				capabilities = require("blink.cmp").get_lsp_capabilities(),
 			})
 
-			vim.lsp.config(
-				"lua_ls",
-				vim.tbl_deep_extend("force", {}, vim.lsp.config["lua_ls"] or {}, {
-					settings = {
-						Lua = {
-							diagnostics = { globals = { "vim" } },
-							workspace = {
-								library = vim.api.nvim_get_runtime_file("", true),
-								checkThirdParty = false,
-							},
-							telemetry = { enable = false },
-						},
-					},
-				})
-			)
+			vim.api.nvim_create_autocmd("LspAttach", {
+				callback = function(args)
+					local buf = args.buf
+					local client = vim.lsp.get_client_by_id(args.data.client_id)
+					if not client then return end
 
+					local map = function(lhs, rhs, desc, mode)
+						vim.keymap.set(mode or "n", lhs, rhs, { buffer = buf, desc = desc })
+					end
+
+					-- Capability-gated keymaps
+					local caps = client.server_capabilities
+					if caps.definitionProvider then
+						map("gd", function() require("telescope.builtin").lsp_definitions({ file_ignore_patterns = {} }) end, "Go to Definition")
+					end
+					if caps.referencesProvider then
+						map("gr", function() require("telescope.builtin").lsp_references({ file_ignore_patterns = {} }) end, "Go to References")
+					end
+					if caps.hoverProvider then
+						map("K", vim.lsp.buf.hover, "Hover Documentation")
+					end
+					if caps.implementationProvider then
+						map("gi", vim.lsp.buf.implementation, "Go to Implementation")
+					end
+					if caps.declarationProvider then
+						map("gD", vim.lsp.buf.declaration, "Go to Declaration")
+					end
+					if caps.signatureHelpProvider then
+						map("<leader>h", vim.lsp.buf.signature_help, "Signature Help")
+					end
+					if caps.renameProvider then
+						map("<leader>r", vim.lsp.buf.rename, "Rename Symbol")
+					end
+					if caps.codeActionProvider then
+						map("<leader>c", vim.lsp.buf.code_action, "Code Action")
+					end
+
+					-- Diagnostics are always available
+					map("<leader>q", vim.diagnostic.setqflist, "Diagnostics → Quickfix")
+					map("]d", function() vim.diagnostic.jump({ count = 1, float = true }) end, "Next Diagnostic")
+					map("[d", function() vim.diagnostic.jump({ count = -1, float = true }) end, "Prev Diagnostic")
+					map("<leader>e", function()
+						local _, winnr = vim.diagnostic.open_float()
+						if winnr then vim.api.nvim_set_current_win(winnr) end
+					end, "Show Diagnostic")
+				end,
+			})
+
+			vim.lsp.config("lua_ls", {
+				settings = {
+					Lua = {
+						diagnostics = { globals = { "vim" } },
+						workspace = {
+							library = vim.api.nvim_get_runtime_file("", true),
+							checkThirdParty = false,
+						},
+						telemetry = { enable = false },
+					},
+				},
+			})
+
+			-- biome requires utf-16 offset encoding
 			vim.lsp.config("biome", {
 				on_init = function(client)
 					client.offset_encoding = "utf-16"
 				end,
 			})
+
+			-- ts_ls: root_markers finds nearest dir containing any of these (order = priority)
+			vim.lsp.config("ts_ls", {
+				root_markers = { "tsconfig.json", "jsconfig.json", "package.json", ".git" },
+				init_options = {
+					preferences = { includePackageJsonAutoImports = "off" },
+				},
+			})
+
+			-- ColdFusion
+			vim.filetype.add({ extension = { cfc = "cfc", cfm = "cfm", cfml = "cfm" } })
+			vim.api.nvim_create_autocmd("FileType", {
+				pattern = "cfc",
+				callback = function() vim.bo.commentstring = "// %s" end,
+			})
+			vim.api.nvim_create_autocmd("FileType", {
+				pattern = "cfm",
+				callback = function() vim.bo.commentstring = "<!--- %s --->" end,
+			})
+			vim.lsp.config("coldfusion_lsp", {
+				cmd = { "node", vim.fn.expand("~/other-repos/coldfusion-lsp/out/server.js"), "--stdio" },
+				filetypes = { "cfc", "cfm" },
+				root_markers = { ".git", "Application.cfc" },
+			})
+			vim.lsp.enable("coldfusion_lsp")
 		end,
 	},
 }

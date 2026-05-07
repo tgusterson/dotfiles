@@ -2,8 +2,6 @@ return {
 	"folke/lazydev.nvim",
 	ft = "lua",
 	opts = {
-		enabled = function()
-			return true
-		end,
+		enabled = function() return true end,
 	},
 }

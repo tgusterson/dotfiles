@@ -1,64 +1,78 @@
 return {
-	{
-		"nvim-treesitter/nvim-treesitter-context",
-		config = function()
-			require("treesitter-context").setup({
-				enable = true, -- Enable this plugin (Can be enabled/disabled later via commands)
-				multiwindow = false, -- Enable multiwindow support.
-				max_lines = 0, -- How many lines the window should span. Values <= 0 mean no limit.
-				min_window_height = 0, -- Minimum editor window height to enable context. Values <= 0 mean no limit.
-				line_numbers = true,
-				multiline_threshold = 1, -- Maximum number of lines to show for a single context
-				trim_scope = "outer", -- Which context lines to discard if `max_lines` is exceeded. Choices: 'inner', 'outer'
-				mode = "cursor", -- Line used to calculate context. Choices: 'cursor', 'topline'
-				separator = nil, -- Separator between context and content. Should be a single character string, like '-'.
-				zindex = 20, -- The Z-index of the context window
-				on_attach = nil, -- (fun(buf: integer): boolean) return false to disable attaching
-			})
-
-			vim.keymap.set("n", "[c", function()
-				require("treesitter-context").go_to_context(vim.v.count1)
-			end, { silent = true, desc = "Jump to context" })
-		end,
-	},
+	-- Parser manager — configs module gone, highlighting is now native in 0.12
 	{
 		"nvim-treesitter/nvim-treesitter",
-		build = ":TSUpdate",
+		branch = "main",
+		version = false,
 		lazy = false,
-		version = "*",
-		config = function(_, opts)
-			require("nvim-treesitter.configs").setup(opts)
+		build = ":TSUpdate",
+		config = function()
+			-- telescope uses nvim-treesitter.parsers.ft_to_lang and nvim-treesitter.configs.is_enabled
+			-- both removed in new nvim-treesitter; stub them so telescope falls back to regex highlighting
+			local parsers = require("nvim-treesitter.parsers")
+			if not parsers.ft_to_lang then
+				parsers.ft_to_lang = function(ft)
+					return vim.treesitter.language.get_lang(ft) or ft
+				end
+			end
+			if not package.loaded["nvim-treesitter.configs"] then
+				package.loaded["nvim-treesitter.configs"] = {
+					is_enabled = function() return false end,
+				}
+			end
+
+			local ensure_installed = {
+				"bash", "c", "css", "diff", "graphql", "html",
+				"javascript", "typescript", "tsx",
+				"json", "lua", "luadoc", "markdown", "markdown_inline",
+				"python", "query", "rust", "sql", "toml",
+				"vim", "vimdoc", "yaml",
+			}
+
+			local installed = require("nvim-treesitter.config").get_installed()
+			local to_install = vim.iter(ensure_installed)
+				:filter(function(p) return not vim.tbl_contains(installed, p) end)
+				:totable()
+			if #to_install > 0 then
+				require("nvim-treesitter").install(to_install)
+			end
+
+			-- Highlighting and indentation are native in 0.12 — enable per filetype
+			vim.api.nvim_create_autocmd("FileType", {
+				group = vim.api.nvim_create_augroup("treesitter-start", { clear = true }),
+				callback = function()
+					pcall(vim.treesitter.start)
+					vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+				end,
+			})
 		end,
+	},
+
+	{
+		"nvim-treesitter/nvim-treesitter-context",
+		dependencies = { "nvim-treesitter/nvim-treesitter" },
 		opts = {
-			ensure_installed = {
-				"bash",
-				"c",
-				"diff",
-				"html",
-				"javascript",
-				"typescript",
-				"tsx",
-				"lua",
-				"luadoc",
-				"markdown",
-				"markdown_inline",
-				"query",
-				"vim",
-				"vimdoc",
+			enable = true,
+			max_lines = 3,
+			multiline_threshold = 1,
+			trim_scope = "outer",
+			mode = "topline",
+		},
+		keys = {
+			{
+				"[c",
+				function() require("treesitter-context").go_to_context(vim.v.count1) end,
+				desc = "Jump to context",
 			},
-			auto_install = true,
-			highlight = { enable = true, additional_vim_regex_highlighting = { "ruby" } },
-			indent = { enable = true, disable = { "ruby" } },
-			incremental_selection = {
-				enable = true,
-				keymaps = {
-					init_selection = "gnn",
-					node_incremental = "grn",
-					scope_incremental = "grc",
-					node_decremental = "grm",
-				},
-			},
-			textobjects = {
+		},
+	},
+
+	{
+		"nvim-treesitter/nvim-treesitter-textobjects",
+		branch = "main",
+		dependencies = { "nvim-treesitter/nvim-treesitter" },
+		config = function()
+			require("nvim-treesitter-textobjects").setup({
 				move = {
 					enable = true,
 					set_jumps = true,
@@ -87,7 +101,6 @@ return {
 						["ii"] = "@conditional.inner",
 						["ao"] = "@block.outer",
 						["io"] = "@block.inner",
-						-- ["as"] = { query = "@local.scope", query_group = "locals", desc = "Select language scope" },
 					},
 					selection_modes = {
 						["@parameter.outer"] = "v",
@@ -96,10 +109,7 @@ return {
 					},
 					include_surrounding_whitespace = true,
 				},
-			},
-		},
-		dependencies = {
-			"nvim-treesitter/nvim-treesitter-textobjects",
-		},
+			})
+		end,
 	},
 }

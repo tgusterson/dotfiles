@@ -1,26 +1,19 @@
--- Copy to clipboard
-vim.keymap.set("n", "<leader>y", '"+y', { noremap = true, silent = true })
-vim.keymap.set("v", "<leader>y", '"+y', { noremap = true, silent = true })
+-- Clipboard
+vim.keymap.set({ "n", "v" }, "<leader>y", '"+y', { noremap = true, silent = true, desc = "Yank to clipboard" })
 
--- Quick command mode
+-- Command mode
 vim.keymap.set("n", "<leader>;", ":", { noremap = true, desc = "Command mode" })
-vim.keymap.set("n", "<shift>:", ";", { noremap = true })
 
--- Copy file path
-vim.keymap.set(
-	"n",
-	"<leader>cp",
-	':let @+ = expand("%:p") | echo "Copied: " . @+<CR>',
-	{ noremap = true, desc = "Copy file path" }
-)
+-- Copy current file path
+vim.keymap.set("n", "<leader>cp", ':let @+ = expand("%:p") | echo "Copied: " . @+<CR>', { noremap = true, desc = "Copy file path" })
 
--- Leave insert mode and move right — easy way to jump out of autopaired characters
+-- Jump out of autopaired characters
 vim.keymap.set("i", "<C-j>", "<Esc>la", { noremap = true, silent = true })
 
 -- Quickfix
 vim.keymap.set("n", "<leader>z", vim.cmd.cclose, { noremap = true, silent = true, desc = "Close quickfix" })
 vim.keymap.set("n", "<M-j>", "<cmd>cnext<CR>", { noremap = true, silent = true, desc = "Next quickfix" })
-vim.keymap.set("n", "<M-k>", "<cmd>cprev<CR>", { noremap = true, silent = true, desc = "Previous quickfix" })
+vim.keymap.set("n", "<M-k>", "<cmd>cprev<CR>", { noremap = true, silent = true, desc = "Prev quickfix" })
 
 -- Clear search highlights
 vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>")
@@ -28,11 +21,15 @@ vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>")
 -- Re-source config
 vim.keymap.set("n", "<leader>vv", "<cmd>source $MYVIMRC<CR>", { noremap = true, desc = "Source config" })
 
--- Window navigation
-vim.keymap.set("n", "<C-h>", "<C-w><C-h>", { desc = "Move focus to the left window" })
-vim.keymap.set("n", "<C-l>", "<C-w><C-l>", { desc = "Move focus to the right window" })
-vim.keymap.set("n", "<C-j>", "<C-w><C-j>", { desc = "Move focus to the lower window" })
-vim.keymap.set("n", "<C-k>", "<C-w><C-k>", { desc = "Move focus to the upper window" })
+-- Window navigation (overridden by tmux-navigator plugin when in tmux)
+vim.keymap.set("n", "<C-h>", "<C-w><C-h>", { desc = "Left window" })
+vim.keymap.set("n", "<C-l>", "<C-w><C-l>", { desc = "Right window" })
+vim.keymap.set("n", "<C-j>", "<C-w><C-j>", { desc = "Lower window" })
+vim.keymap.set("n", "<C-k>", "<C-w><C-k>", { desc = "Upper window" })
 
--- Terminal mode
+-- Terminal escape
 vim.keymap.set("t", "<Esc><Esc>", [[<C-\><C-n>]], { desc = "Exit terminal mode" })
+
+-- Copilot (set here so they're available before plugins load)
+vim.keymap.set("i", "<C-a>", 'copilot#Accept("\\<CR>")', { expr = true, replace_keycodes = false })
+vim.keymap.set("i", "<C-l>", 'copilot#AcceptLine("\\<CR>")', { expr = true, replace_keycodes = false })
