@@ -21,13 +21,18 @@ return {
 				}
 			end
 
-			require("nvim-treesitter").install({
-				"bash", "c", "css", "diff", "graphql", "html",
-				"javascript", "typescript", "tsx",
-				"json", "lua", "luadoc", "markdown", "markdown_inline",
-				"python", "query", "rust", "sql", "toml",
-				"vim", "vimdoc", "yaml",
-			})
+			vim.schedule(function()
+				local ok, ts = pcall(require, "nvim-treesitter")
+				if ok and ts.install then
+					ts.install({
+						"bash", "c", "css", "diff", "graphql", "html",
+						"javascript", "typescript", "tsx",
+						"json", "lua", "luadoc", "markdown", "markdown_inline",
+						"python", "query", "rust", "sql", "toml",
+						"vim", "vimdoc", "yaml",
+					})
+				end
+			end)
 
 			-- Highlighting and indentation are native in 0.12 — enable per filetype
 			vim.api.nvim_create_autocmd("FileType", {
