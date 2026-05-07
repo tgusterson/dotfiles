@@ -18,7 +18,12 @@ M.linters = {
 	python = { "flake8" },
 	html = { "htmlhint" },
 	lua = { "luacheck" },
-	go = { "golangci-lint" },
+	go = { "golangcilint" },
+}
+
+-- Maps nvim-lint tool names → Mason package names where they differ
+M.mason_name_map = {
+	golangcilint = "golangci-lint",
 }
 
 M.formatters = {
@@ -43,15 +48,16 @@ function M.extract_lsp_servers(lsp_table)
 	return servers
 end
 
-function M.extract_unique_tools(tool_table)
+function M.extract_unique_tools(tool_table, name_map)
 	local unique_tools = {}
 	local seen = {}
 
 	for _, tools in pairs(tool_table) do
 		for _, tool in ipairs(tools) do
-			if not seen[tool] then
-				table.insert(unique_tools, tool)
-				seen[tool] = true
+			local mason_name = (name_map and name_map[tool]) or tool
+			if not seen[mason_name] then
+				table.insert(unique_tools, mason_name)
+				seen[mason_name] = true
 			end
 		end
 	end
@@ -60,7 +66,7 @@ function M.extract_unique_tools(tool_table)
 end
 
 M.lsp_list = M.extract_lsp_servers(M.lsp)
-M.linters_list = M.extract_unique_tools(M.linters)
+M.linters_list = M.extract_unique_tools(M.linters, M.mason_name_map)
 M.formatters_list = M.extract_unique_tools(M.formatters)
 
 local function merge_tool_lists(list1, list2)
