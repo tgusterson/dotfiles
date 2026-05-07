@@ -15,3 +15,8 @@ vim.api.nvim_create_autocmd("TextYankPost", {
 	group = vim.api.nvim_create_augroup("highlight-yank", { clear = true }),
 	callback = function() vim.hl.on_yank() end,
 })
+
+-- Silently ignore swap files when LSP (or anything else) opens a buffer programmatically
+vim.api.nvim_create_autocmd("SwapExists", {
+	callback = function() vim.v.swapchoice = "e" end,
+})

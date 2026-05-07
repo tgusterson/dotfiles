@@ -9,17 +9,30 @@ return {
 		config = function()
 			-- telescope uses nvim-treesitter.parsers.ft_to_lang and nvim-treesitter.configs.is_enabled
 			-- both removed in new nvim-treesitter; stub them so telescope falls back to regex highlighting
-			local parsers = require("nvim-treesitter.parsers")
-			if not parsers.ft_to_lang then
-				parsers.ft_to_lang = function(ft)
-					return vim.treesitter.language.get_lang(ft) or ft
+			-- reload_parsers() in nvim-treesitter wipes package.loaded on every install, so re-apply on TSUpdate
+			local function apply_telescope_shims()
+				local parsers = require("nvim-treesitter.parsers")
+				if not parsers.ft_to_lang then
+					parsers.ft_to_lang = function(ft)
+						return vim.treesitter.language.get_lang(ft) or ft
+					end
+				end
+				if not package.loaded["nvim-treesitter.configs"] then
+					package.loaded["nvim-treesitter.configs"] = {
+						is_enabled = function() return false end,
+					}
 				end
 			end
-			if not package.loaded["nvim-treesitter.configs"] then
-				package.loaded["nvim-treesitter.configs"] = {
-					is_enabled = function() return false end,
-				}
-			end
+			apply_telescope_shims()
+			vim.api.nvim_create_autocmd("User", {
+				pattern = "TSUpdate",
+				callback = apply_telescope_shims,
+			})
+
+			-- Map CF filetypes to their treesitter parsers (parsers are pre-installed)
+			vim.treesitter.language.register("cfscript", "cfc")
+			vim.treesitter.language.register("cfhtml", "cfm")
+			vim.treesitter.language.register("cfml", "cfml")
 
 			vim.schedule(function()
 				local ok, ts = pcall(require, "nvim-treesitter")

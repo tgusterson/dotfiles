@@ -108,18 +108,18 @@ return {
 			})
 
 			-- ColdFusion
-			vim.filetype.add({ extension = { cfc = "cfc", cfm = "cfm", cfml = "cfm" } })
+			vim.filetype.add({ extension = { cfc = "cfc", cfm = "cfm", cfml = "cfml" } })
 			vim.api.nvim_create_autocmd("FileType", {
-				pattern = "cfc",
+				pattern = { "cfc" },
 				callback = function() vim.bo.commentstring = "// %s" end,
 			})
 			vim.api.nvim_create_autocmd("FileType", {
-				pattern = "cfm",
+				pattern = { "cfm", "cfml" },
 				callback = function() vim.bo.commentstring = "<!--- %s --->" end,
 			})
 			vim.lsp.config("coldfusion_lsp", {
 				cmd = { "node", vim.fn.expand("~/other-repos/coldfusion-lsp/out/server.js"), "--stdio" },
-				filetypes = { "cfc", "cfm" },
+				filetypes = { "cfc", "cfm", "cfml" },
 				root_markers = { ".git", "Application.cfc" },
 			})
 			vim.lsp.enable("coldfusion_lsp")
