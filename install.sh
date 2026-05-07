@@ -74,6 +74,9 @@ BREW_PKGS=(
   tldr
   zoxide
   pipx
+  node
+  go
+  rust
 )
 
 log_info "Installing packages..."
