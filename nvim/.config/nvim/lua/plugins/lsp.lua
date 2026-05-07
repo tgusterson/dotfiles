@@ -44,10 +44,10 @@ return {
 					-- Capability-gated keymaps
 					local caps = client.server_capabilities
 					if caps.definitionProvider then
-						map("gd", function() require("telescope.builtin").lsp_definitions({ file_ignore_patterns = {} }) end, "Go to Definition")
+						map("gd", vim.lsp.buf.definition, "Go to Definition")
 					end
 					if caps.referencesProvider then
-						map("gr", function() require("telescope.builtin").lsp_references({ file_ignore_patterns = {} }) end, "Go to References")
+						map("gr", vim.lsp.buf.references, "Go to References")
 					end
 					if caps.hoverProvider then
 						map("K", vim.lsp.buf.hover, "Hover Documentation")
