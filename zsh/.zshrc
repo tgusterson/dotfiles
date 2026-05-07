@@ -155,11 +155,16 @@ export BAT_THEME="tokyonight_night"
 # 6. ALIASES
 # ------------------------------------------------------------------------------
 alias brew='env PATH="${PATH//$(pyenv root)\/shims:/}" brew'
+alias nano='nano -m'
 # alias pip=/usr/local/bin/pip3 # Removed hardcoded path
 alias gl='gita ll'
 alias gs='gita super'
 alias dotfiles='cd ~/.dotfiles'
 alias notes='cd ~/notes'
+alias pwf-apps='cd ~/repos/pwf-apps'
+alias graphql='cd ~/repos/graphql'
+alias v8='cd ~/repos/v8'
+alias proactive='cd ~/repos/proactive'
 alias inv='nvim $(fzf -m --preview="bat --color=always {}")'
 alias start_my_day="~/start_my_day.sh"
 alias ollama-serve='OLLAMA_FLASH_ATTENTION="1" OLLAMA_KV_CACHE_TYPE="q8_0" /opt/homebrew/opt/ollama/bin/ollama serve'
@@ -171,7 +176,7 @@ alias ollama-serve='OLLAMA_FLASH_ATTENTION="1" OLLAMA_KV_CACHE_TYPE="q8_0" /opt/
   source "$BREW_PREFIX/share/powerlevel10k/powerlevel10k.zsh-theme"
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
-eval "$(zoxide init zsh --cmd cd)"
+eval "$(zoxide init zsh)"
 
 bindkey -v
 bindkey -M vicmd '^v' edit-command-line
