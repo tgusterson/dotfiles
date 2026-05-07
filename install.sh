@@ -74,7 +74,6 @@ BREW_PKGS=(
   tldr
   zoxide
   pipx
-  node
   go
   rust
 )
@@ -144,7 +143,17 @@ if [[ ! -f "$GITA_COMPLETION" ]]; then
         -o "$GITA_COMPLETION" && log_success "gita completion installed." || log_error "Failed to download gita completion."
 fi
 
-# 8. Install TPM (Tmux Plugin Manager)
+# 8. Install nvm
+if [ ! -d "$HOME/.nvm" ]; then
+    log_info "Installing nvm..."
+    NVM_LATEST=$(curl -fsSL https://api.github.com/repos/nvm-sh/nvm/releases/latest | grep '"tag_name"' | sed 's/.*"v\([^"]*\)".*/\1/')
+    curl -o- "https://raw.githubusercontent.com/nvm-sh/nvm/v${NVM_LATEST}/install.sh" | bash
+    log_success "nvm installed. Run 'nvm install --lts' after restarting your shell."
+else
+    log_info "nvm already installed."
+fi
+
+# 9. Install TPM (Tmux Plugin Manager)
 if [ ! -d "$HOME/.tmux/plugins/tpm" ]; then
     log_info "Installing TPM..."
     git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
@@ -152,7 +161,7 @@ else
     log_info "TPM already installed."
 fi
 
-# 9. Final Check
+# 10. Final Check
 log_success "Installation Complete!"
 echo "--------------------------------------------------------"
 echo "If you are on Linux, you might need to add Homebrew to your PATH manually in your profile if not already there:"
