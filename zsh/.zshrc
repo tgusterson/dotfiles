@@ -179,5 +179,5 @@ alias ollama-serve='OLLAMA_FLASH_ATTENTION="1" OLLAMA_KV_CACHE_TYPE="q8_0" /opt/
 eval "$(zoxide init zsh)"
 
 bindkey -v
-bindkey -M vicmd '^v' edit-command-line
-bindkey -M viins '^v' edit-command-line
+bindkey -M vicmd '^g' edit-command-line
+bindkey -M viins '^g' edit-command-line
